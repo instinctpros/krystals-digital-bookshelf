@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krystal's Digital Bookshelf</title>
+  <style>
+    body { font-family: Georgia, serif; background:#f8f6f2; color:#29243b; max-width:800px; margin:50px auto; padding:0 20px; }
+    h1 { font-weight:normal; font-size:2.4rem; }
+    select { font:inherit; padding:10px; border:1px solid #a49aad; border-radius:6px; background:white; }
+    li { margin:0 0 12px; line-height:1.5; }
+    .sub { color:#6f687b; }
+  </style>
+</head>
+<body>
+  <h1>Krystal's Digital Bookshelf</h1>
+  <p>A little archive of stories and ideas I've explored.</p>
+  <label for="genre">Browse by genre:</label>
+  <select id="genre">
+    <option value="">All books</option>
+    <option value="Sci-Fi">Sci-Fi</option>
+    <option value="Fantasy">Fantasy</option>
+    <option value="Self-Help">Self-Help</option>
+    <option value="Fiction">Fiction</option>
+  </select>
+  <p id="count" class="sub"></p>
+  <ul id="books"></ul>
+  <p class="sub">Server routes: <a href="/data">/data</a> · <a href="/data/2">/data/2</a></p>
+  <script>
+    const genreSelect = document.getElementById("genre");
+    const list = document.getElementById("books");
+    const count = document.getElementById("count");
+
+    // BONUS 1: fetch data from our own Express server.
+    async function showBooks() {
+      const genre = genreSelect.value;
+      const url = genre ? `/data?genre=${encodeURIComponent(genre)}` : "/data";
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Could not load books");
+        const books = await response.json();
+        count.textContent = `${books.length} book${books.length === 1 ? "" : "s"}`;
+        list.replaceChildren();
+        books.forEach(book => {
+          const li = document.createElement("li");
+          const strong = document.createElement("strong");
+          strong.textContent = book.title;
+          li.append(strong, ` — ${book.author} (${book.genre})`);
+          list.appendChild(li);
+        });
+      } catch(error) { count.textContent = "Error loading books"; }
+    }
+    genreSelect.addEventListener("change", showBooks);
+    showBooks();
+  </script>
+</body>
+</html>
