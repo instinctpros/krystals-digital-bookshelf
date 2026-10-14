@@ -4,7 +4,7 @@ const app = express();
 const port = 3000;
 
 // Book titles and authors come from my book tracker.
-// The genres are simplified into four categories for this exercise.
+// The genres are simplified into four categories.
 const books = [
   {
     "id": 1,
